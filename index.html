@@ -367,36 +367,41 @@ function vote(voteType) {
 // === CONFETTI HELPER ===
 function spawnConfettiEmoji(emoji) {
   for (let i = 0; i < 25; i++) {
-    const confetto = document.createElement('div');
-    confetto.textContent = emoji;
-    confetto.style.position = 'fixed';
-    confetto.style.left = `${Math.random() * 100}vw`;
-    confetto.style.top = `-5vh`;
-    confetto.style.fontSize = `${Math.random() * 20 + 20}px`;
-    confetto.style.zIndex = 9999;
-    confetto.style.pointerEvents = 'none';
-    confetto.style.animation = `drop${i} 2s ease-out forwards`;
-    document.body.appendChild(confetto);
+    const delay = i * 50 + Math.random() * 50; // Spread out with slight randomness
 
-    // Create keyframes dynamically
-    const keyframes = document.createElement('style');
-    keyframes.innerHTML = `
-      @keyframes drop${i} {
-        to {
-          transform: translateY(110vh) rotate(${Math.random() * 720 - 360}deg);
-          opacity: 0;
-        }
-      }
-    `;
-    document.head.appendChild(keyframes);
-
-    // Clean up after animation
     setTimeout(() => {
-      confetto.remove();
-      keyframes.remove();
-    }, 2100);
+      const confetto = document.createElement('div');
+      confetto.textContent = emoji;
+      confetto.style.position = 'fixed';
+      confetto.style.left = `${Math.random() * 100}vw`;
+      confetto.style.top = `-5vh`;
+      confetto.style.fontSize = `${Math.random() * 20 + 20}px`;
+      confetto.style.zIndex = 9999;
+      confetto.style.pointerEvents = 'none';
+      confetto.style.animation = `drop${i} 2s ease-out forwards`;
+      document.body.appendChild(confetto);
+
+      // Create keyframes dynamically
+      const keyframes = document.createElement('style');
+      keyframes.innerHTML = `
+        @keyframes drop${i} {
+          to {
+            transform: translateY(110vh) rotate(${Math.random() * 720 - 360}deg);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(keyframes);
+
+      // Clean up after animation
+      setTimeout(() => {
+        confetto.remove();
+        keyframes.remove();
+      }, 2100);
+    }, delay);
   }
 }
+
 
 // === UPDATED VOTE HANDLER ===
 function vote(voteType) {
