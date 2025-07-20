@@ -325,12 +325,10 @@ function nextRound() {
 
   function getEffectiveWeights(arr, lastItem) {
     return arr.map(item => {
-      let adjustedWeight = item.weight;
       if (lastItem && item.id === lastItem.id) {
-        adjustedWeight = Math.max(adjustedWeight - REPEAT_PENALTY, 0);
-        item.weight = Math.max(item.weight - 2, 0); // permanent penalty
+        return { ...item, weight: Math.max(item.weight - REPEAT_PENALTY, 0) };
       }
-      return { ...item, weight: adjustedWeight };
+      return { ...item };
     });
   }
 
@@ -343,19 +341,23 @@ function nextRound() {
   currentImage = weightedRandom(weightedImages);
   currentSound = weightedRandom(weightedSounds);
 
-  memeImage.src = currentImage.src;
+  // Set image alt early for accessibility
   memeImage.alt = `Meme Image #${currentImage.id}`;
 
-  // Wait for image to load, then play sound
+  // Wait for image to load before playing sound
   memeImage.onload = () => {
-    memeSound.src = currentSound.src;
-    memeSound.load();
     memeSound.play().catch(() => {});
   };
+
+  memeImage.src = currentImage.src;
+
+  memeSound.src = currentSound.src;
+  memeSound.load();
 
   lastImage = currentImage;
   lastSound = currentSound;
 }
+
 
 
 // === VOTE HANDLER ===
