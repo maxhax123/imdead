@@ -455,9 +455,9 @@ function nextRound() {
     return arr.map(item => {
       let adjustedWeight = item.weight;
       if (lastItem && item.id === lastItem.id) {
-        adjustedWeight = Math.max(adjustedWeight - REPEAT_PENALTY, 0);
+        // adjustedWeight = Math.max(adjustedWeight - REPEAT_PENALTY, 0);
         // 👇 Save permanent penalty
-        item.weight = Math.max(item.weight - 2, 0);
+        // item.weight = Math.max(item.weight - 2, 0);
       }
       return {...item, weight: adjustedWeight};
     });
