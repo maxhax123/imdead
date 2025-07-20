@@ -145,6 +145,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 
 #start-btn {
@@ -218,25 +219,9 @@ body, body * {
 
 <div id="start-overlay">
   <button id="start-btn">Start Game</button>
-  <h1>can you train an ai to overcome your humor responce?</h1>h1>
+  <h1>can you train an ai to overcome your humor responce?</h1>
 </div>
-<style>
-  #start-overlay {
-    display: flex;
-    flex-direction: column; /* stack items vertically */
-    align-items: center;    /* center horizontally */
-    justify-content: center; /* center vertically if needed */
-    height: 100vh; /* full screen */
-  }
 
-  #start-btn {
-    margin-bottom: 20px; /* space between button and h1 */
-  }
-
-  h1 {
-    text-align: center;
-  }
-</style>
   
 <script>
 // === CONTENT PLACEHOLDERS ===
