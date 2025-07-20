@@ -6,126 +6,173 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Don't Die!</title>
 <style>
-  /* Background */
-  body {
+  html, body {
     font-family: 'Comic Sans MS', cursive, sans-serif;
     background: url('background.jpg') no-repeat center center fixed;
     background-size: cover;
     color: #111;
-    text-align: center;
-    padding: 20px;
     margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
-  /* Container max width */
+  h1 {
+    color: white;
+    margin: 10px 0;
+    font-size: 1.8rem;
+    text-shadow: 2px 2px 3px #000;
+  }
+
+  #round-counter, #risk-label {
+    font-size: 1.2rem;
+    margin: 4px 0;
+  }
+
+  #risk-label {
+    color: #cc0000;
+    text-shadow: 1px 1px 3px #fff;
+  }
+
+  #image-container {
+    margin: 8px 0;
+    max-height: 30vh;
+  }
+
   #image-container img {
-    max-width: 90vw;
-    max-height: 300px;
+    max-width: 80vw;
+    max-height: 100%;
     border-radius: 10px;
-    box-shadow: 0 0 15px #555;
-    margin: 0 auto;
-    display: block;
+    box-shadow: 0 0 10px #555;
   }
 
-h1 {
-   color: white;
-}
+  #sound-player {
+    margin: 8px 0;
+  }
 
-#sound-player {
-  margin: 20px auto;
-  background: white;
-  border: 5px solid #000;
-  border-radius: 0.5em;
-  padding: 15px;
-  width: fit-content;
-  display: block;
-  box-shadow: 5px 5px 0 #000;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
-}
+  #buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin: 6px 0;
+  }
 
-
-  /* White button theme */
   button.vote-btn, #dose-btn, #close-summary {
     font-family: 'Comic Sans MS', cursive, sans-serif;
     background: white;
     color: black;
     border: 2px solid #555;
-    padding: 12px 20px;
-    margin: 10px 6px;
+    padding: 8px 14px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
-    user-select: none;
-    font-size: 1.2rem;
-    min-width: 120px;
+    font-size: 1rem;
+    min-width: 100px;
+    transition: 0.15s ease;
   }
+
   button.vote-btn:hover, #dose-btn:hover, #close-summary:hover {
     background: #ddd;
     transform: scale(1.05);
   }
 
-  #round-counter {
-    margin: 20px 0;
-    font-weight: bold;
-    font-size: 1.4rem;
-    color: #222;
-    text-shadow: 1px 1px 2px #fff;
-  }
-
-  #risk-label {
-    color: #cc0000;
-    font-weight: bold;
-    margin-bottom: 10px;
-    font-size: 1.3rem;
-    text-shadow: 1px 1px 3px #fff;
-  }
-
-  /* Modal */
   #summary-modal {
     display: none;
     position: fixed;
-    top: 5vh;
-    left: 10vw;
-    width: 80vw;
+    top: 5%;
+    left: 5%;
+    width: 90vw;
     height: 90vh;
+    background: rgba(255,255,255,0.96);
     overflow-y: auto;
-    background: rgba(255,255,255,0.95);
-    border: 2px solid #555;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 20px;
-    color: #111;
     z-index: 1000;
-    box-shadow: 0 0 15px #999;
+    box-shadow: 0 0 20px #333;
   }
+
   #summary-modal h2 {
     margin-top: 0;
   }
+
   #summary-modal table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 10px;
-  }
-  #summary-modal th, #summary-modal td {
-    padding: 8px 12px;
-    border-bottom: 1px solid #aaa;
   }
 
-  /* Responsive for mobile */
+  #summary-modal th, #summary-modal td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #aaa;
+    font-size: 0.95rem;
+  }
+
   @media (max-width: 600px) {
+    h1 {
+      font-size: 1.4rem;
+    }
+
     button.vote-btn, #dose-btn, #close-summary {
-      font-size: 1rem;
+      font-size: 0.9rem;
+      padding: 6px 10px;
       min-width: 90px;
-      padding: 10px 16px;
-      margin: 8px 4px;
     }
+
     #image-container img {
-      max-height: 200px;
+      max-width: 90vw;
+      max-height: 25vh;
     }
-    #round-counter, #risk-label {
-      font-size: 1.1rem;
+
+    #summary-modal {
+      font-size: 0.9rem;
+    }
+
+    #summary-modal th, #summary-modal td {
+      padding: 5px 6px;
     }
   }
+
+  #start-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#start-btn {
+  background: white;
+  color: black;
+  font-size: 1.6rem;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  padding: 16px 28px;
+  border-radius: 12px;
+  border: 3px solid #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#start-btn:hover {
+  background: #eee;
+  transform: scale(1.05);
+}
+
+/* Disable text selection globally */
+body, body * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+  
 </style>
+
 </head>
 <body>
 
@@ -167,6 +214,11 @@ h1 {
   <button id="close-summary">Close</button>
 </div>
 
+<div id="start-overlay">
+  <button id="start-btn">▶️ Start Game</button>
+</div>
+
+  
 <script>
 // === CONTENT PLACEHOLDERS ===
 const images = [
@@ -259,10 +311,12 @@ function nextRound() {
 
   function getEffectiveWeights(arr, lastItem) {
     return arr.map(item => {
+      let adjustedWeight = item.weight;
       if (lastItem && item.id === lastItem.id) {
-        return {...item, weight: Math.max(item.weight - REPEAT_PENALTY, 0)};
+        adjustedWeight = Math.max(adjustedWeight - REPEAT_PENALTY, 0);
+        item.weight = Math.max(item.weight - 2, 0); // permanent penalty
       }
-      return {...item};
+      return { ...item, weight: adjustedWeight };
     });
   }
 
@@ -278,13 +332,17 @@ function nextRound() {
   memeImage.src = currentImage.src;
   memeImage.alt = `Meme Image #${currentImage.id}`;
 
-  memeSound.src = currentSound.src;
-  memeSound.load();
-  memeSound.play().catch(() => {});
+  // Wait for image to load, then play sound
+  memeImage.onload = () => {
+    memeSound.src = currentSound.src;
+    memeSound.load();
+    memeSound.play().catch(() => {});
+  };
 
   lastImage = currentImage;
   lastSound = currentSound;
 }
+
 
 // === VOTE HANDLER ===
 function vote(voteType) {
@@ -450,7 +508,11 @@ function init() {
   });
 }
 
-init();
+document.getElementById('start-btn').onclick = () => {
+  document.getElementById('start-overlay').style.display = 'none';
+  init();
+};
+
 </script>
 </body>
 </html>
