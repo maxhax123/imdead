@@ -1,342 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Don't Die!</title>
-<style>
-  /* Background */
-  body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background: url('background.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: #111;
-    text-align: center;
-    padding: 20px;
-    margin: 0;
-  }
-
-  /* Container max width */
-  #image-container img {
-    max-width: 90vw;
-    max-height: 300px;
-    border-radius: 10px;
-    margin: 0 auto;
-    display: block;
-  }
-
-  #sound-player {
-    margin: 20px 0;
-  }
-
-  /* White button theme */
-  button.vote-btn, #dose-btn, #close-summary {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background: white;
-    color: black;
-    border: 2px solid #555;
-    padding: 12px 20px;
-    margin: 10px 6px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
-    user-select: none;
-    font-size: 1.2rem;
-    min-width: 120px;
-  }
-  button.vote-btn:hover, #dose-btn:hover, #close-summary:hover {
-    background: #ddd;
-    transform: scale(1.05);
-  }
-
-  #round-counter {
-    margin: 20px 0;
-    font-weight: bold;
-    font-size: 1.4rem;
-    color: #222;
-    text-shadow: 1px 1px 2px #fff;
-  }
-
-  #risk-label {
-    color: #cc0000;
-    font-weight: bold;
-    margin-bottom: 10px;
-    font-size: 1.3rem;
-    text-shadow: 1px 1px 3px #fff;
-  }
-
-  /* Modal */
-  #summary-modal {
-    display: none;
-    position: fixed;
-    top: 5vh;
-    left: 10vw;
-    width: 80vw;
-    height: 90vh;
-    overflow-y: auto;
-    background: rgba(255,255,255,0.95);
-    border: 2px solid #555;
-    border-radius: 10px;
-    padding: 20px;
-    color: #111;
-    z-index: 1000;
-    box-shadow: 0 0 15px #999;
-  }
-  #summary-modal h2 {
-    margin-top: 0;
-  }
-  #summary-modal table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 10px;
-  }
-  #summary-modal th, #summary-modal td {
-    padding: 8px 12px;
-    border-bottom: 1px solid #aaa;
-  }
-
-  /* Responsive for mobile */
-  @media (max-width: 600px) {
-    button.vote-btn, #dose-btn, #close-summary {
-      font-size: 1rem;
-      min-width: 90px;
-      padding: 10px 16px;
-      margin: 8px 4px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Don't Die!!!</title>
+  <style>
+    body {
+      margin: 0;
+      background: url('background.jpg') center/cover no-repeat;
+      font-family: 'Comic Sans MS', cursive;
+      color: white;
+      text-align: center;
     }
-    #image-container img {
-      max-height: 200px;
+
+    #round {
+      font-size: 2em;
+      color: white;
+      margin-top: 0.5em;
     }
-    #round-counter, #risk-label {
-      font-size: 1.1rem;
+
+    .meme {
+      max-width: 90%;
+      height: auto;
+      border-radius: 20px;
+      margin-top: 1em;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+      transition: transform 0.3s ease;
     }
-  }
-</style>
+
+    .meme.explode {
+      animation: explode 0.6s ease forwards;
+    }
+
+    @keyframes explode {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.5; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    .rate-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1em;
+      gap: 0.5em;
+    }
+
+    .rate-buttons button {
+      font-size: 1.2em;
+      background: white;
+      border: none;
+      border-radius: 10px;
+      color: black;
+      padding: 0.5em 1em;
+      font-family: 'Comic Sans MS', cursive;
+      transition: transform 0.1s ease;
+    }
+
+    .rate-buttons button:hover {
+      transform: scale(1.1);
+      cursor: pointer;
+    }
+
+    .audio {
+      display: none;
+    }
+
+    .rating-display {
+      margin-top: 1em;
+      font-size: 1.3em;
+    }
+  </style>
 </head>
 <body>
+  <h1>Don't Die!!!</h1>
+  <div id="round">Round 1</div>
+  <img id="meme" class="meme" src="" alt="Meme"/>
+  <audio id="audio" class="audio"></audio>
+  <div class="rate-buttons" id="rating">
+    <!-- Buttons 1 to 10 -->
+    ${[...Array(10)].map((_, i) => `<button onclick="rate(${i+1})">${i+1}</button>`).join('')}
+  </div>
+  <div class="rating-display" id="ratingDisplay"></div>
+  <audio id="fireAudio" src="fire-whoosh.mp3" class="audio"></audio>
 
-<h1>Try Not To Laugh — AI-Powered TNTL</h1>
-<div id="round-counter">Round: 1</div>
-<div id="risk-label" style="display:none;">⚠️ ai is trying some new combos out ⚠️</div>
+  <script>
+    const images = [...Array(20)].map((_, i) => `images/img${i+1}.jpg`);
+    const sounds = [...Array(20)].map((_, i) => `sounds/sound${i+1}.mp3`);
+    const weights = Array(images.length).fill(5);
+    let round = 1;
+    let lastShown = null;
 
-<div id="image-container">
-  <img id="meme-image" src="" alt="Meme Image" />
-</div>
-
-<div id="sound-player">
-  <audio id="meme-sound" controls></audio>
-</div>
-
-<div id="buttons-container">
-  <button class="vote-btn" data-vote="DEAD">💀 I'M DEAD</button>
-  <button class="vote-btn" data-vote="FUNNY">😂 Funny</button>
-  <button class="vote-btn" data-vote="MEH">😐 Meh</button>
-  <button class="vote-btn" data-vote="TRASH">🗑️ Trash</button>
-  <button class="vote-btn" data-vote="KYS">🤬 KYS</button>
-</div>
-
-<button id="dose-btn">I've had my daily dose</button>
-
-<!-- Summary Modal -->
-<div id="summary-modal">
-  <h2>Your TNTL Content Weights</h2>
-  <h3>Images</h3>
-  <table id="images-summary">
-    <thead><tr><th>ID</th><th>Weight (0-10)</th></tr></thead>
-    <tbody></tbody>
-  </table>
-  <h3>Sounds</h3>
-  <table id="sounds-summary">
-    <thead><tr><th>ID</th><th>Weight (0-10)</th></tr></thead>
-    <tbody></tbody>
-  </table>
-  <button id="close-summary">Close</button>
-</div>
-
-<script>
-const images = [
-  {id:1, src:'images/1.gif', weight:5},
-  {id:2, src:'images/2.gif', weight:5},
-  {id:3, src:'images/3.gif', weight:5},
-  {id:4, src:'images/4.gif', weight:5},
-  {id:5, src:'images/5.gif', weight:5},
-  {id:6, src:'images/6.gif', weight:5},
-  {id:7, src:'images/7.gif', weight:5},
-  {id:8, src:'images/8.gif', weight:5},
-  {id:9, src:'images/9.gif', weight:5},
-  {id:10, src:'images/10.gif', weight:5},
-  {id:11, src:'images/11.gif', weight:5},
-  {id:12, src:'images/12.gif', weight:5},
-  {id:13, src:'images/13.gif', weight:5},
-  {id:14, src:'images/14.gif', weight:5},
-  {id:15, src:'images/15.gif', weight:5},
-  {id:16, src:'images/16.gif', weight:5},
-  {id:17, src:'images/17.gif', weight:5},
-  {id:18, src:'images/18.gif', weight:5},
-  {id:19, src:'images/19.gif', weight:5},
-  {id:20, src:'images/20.gif', weight:5}
-];
-
-const sounds = [
-  {id:1, src:'sounds/1.mp3', weight:5},
-  {id:2, src:'sounds/2.mp3', weight:5},
-  {id:3, src:'sounds/3.mp3', weight:5},
-  {id:4, src:'sounds/4.mp3', weight:5},
-  {id:5, src:'sounds/5.mp3', weight:5},
-  {id:6, src:'sounds/6.mp3', weight:5},
-  {id:7, src:'sounds/7.mp3', weight:5},
-  {id:8, src:'sounds/8.mp3', weight:5},
-  {id:9, src:'sounds/9.mp3', weight:5},
-  {id:10, src:'sounds/10.mp3', weight:5},
-  {id:11, src:'sounds/11.mp3', weight:5},
-  {id:12, src:'sounds/12.mp3', weight:5},
-  {id:13, src:'sounds/13.mp3', weight:5},
-  {id:14, src:'sounds/14.mp3', weight:5},
-  {id:15, src:'sounds/15.mp3', weight:5},
-  {id:16, src:'sounds/16.mp3', weight:5},
-  {id:17, src:'sounds/17.mp3', weight:5},
-  {id:18, src:'sounds/18.mp3', weight:5},
-  {id:19, src:'sounds/19.mp3', weight:5},
-  {id:20, src:'sounds/20.mp3', weight:5}
-];
-
-// === UTILS ===
-function weightedRandom(arr) {
-  const totalWeight = arr.reduce((acc, item) => acc + item.weight, 0);
-  let rand = Math.random() * totalWeight;
-  for (const item of arr) {
-    if (rand < item.weight) return item;
-    rand -= item.weight;
-  }
-  return arr[arr.length-1];
-}
-
-function lowestN(arr, n) {
-  return [...arr].sort((a,b) => a.weight - b.weight).slice(0,n);
-}
-
-// === STATE ===
-let round = 1;
-let currentImage = null;
-let currentSound = null;
-const LEARNING_RATE = 1;
-const REPEAT_PENALTY = 3;
-let lastImage = null;
-let lastSound = null;
-
-// === UI ELEMENTS ===
-const roundCounter = document.getElementById('round-counter');
-const riskLabel = document.getElementById('risk-label');
-const memeImage = document.getElementById('meme-image');
-const memeSound = document.getElementById('meme-sound');
-const buttons = document.querySelectorAll('button.vote-btn');
-const doseBtn = document.getElementById('dose-btn');
-const summaryModal = document.getElementById('summary-modal');
-const imagesSummaryTbody = document.querySelector('#images-summary tbody');
-const soundsSummaryTbody = document.querySelector('#sounds-summary tbody');
-const closeSummaryBtn = document.getElementById('close-summary');
-
-// === PICK CONTENT WITH REPEAT PUNISHMENT ===
-function nextRound() {
-  roundCounter.textContent = `Round: ${round}`;
-  const isRiskRound = (round % 5 === 0);
-  riskLabel.style.display = isRiskRound ? 'block' : 'none';
-
-  function getEffectiveWeights(arr, lastItem) {
-    return arr.map(item => {
-      if (lastItem && item.id === lastItem.id) {
-        return {...item, weight: Math.max(item.weight - REPEAT_PENALTY, 0)};
+    function pickWeightedRandom(arr, weightArr) {
+      const total = weightArr.reduce((a, b) => a + b, 0);
+      const rand = Math.random() * total;
+      let sum = 0;
+      for (let i = 0; i < arr.length; i++) {
+        sum += weightArr[i];
+        if (rand < sum) return i;
       }
-      return {...item};
-    });
-  }
-
-  let imageCandidates = isRiskRound ? lowestN(images, 5) : images;
-  let soundCandidates = isRiskRound ? lowestN(sounds, 5) : sounds;
-
-  const weightedImages = getEffectiveWeights(imageCandidates, lastImage);
-  const weightedSounds = getEffectiveWeights(soundCandidates, lastSound);
-
-  currentImage = weightedRandom(weightedImages);
-  currentSound = weightedRandom(weightedSounds);
-
-  memeImage.src = currentImage.src;
-  memeImage.alt = `Meme Image #${currentImage.id}`;
-
-  memeSound.src = currentSound.src;
-  memeSound.load();
-  memeSound.play().catch(() => {});
-
-  lastImage = currentImage;
-  lastSound = currentSound;
-}
-
-// === VOTE HANDLER ===
-function vote(voteType) {
-  const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
-  function updateWeight(item) {
-    switch(voteType) {
-      case 'DEAD': item.weight = clamp(item.weight + 3 * LEARNING_RATE, 0, 10); break;
-      case 'FUNNY': item.weight = clamp(item.weight + 1 * LEARNING_RATE, 0, 10); break;
-      case 'MEH': /* no change */ break;
-      case 'TRASH': item.weight = clamp(item.weight - 2 * LEARNING_RATE, 0, 10); break;
-      case 'KYS': item.weight = clamp(item.weight - 4 * LEARNING_RATE, 0, 10); break;
+      return 0;
     }
-  }
 
-  updateWeight(currentImage);
-  updateWeight(currentSound);
+    function nextRound() {
+      document.getElementById('ratingDisplay').textContent = '';
+      document.getElementById('round').textContent = `Round ${round}`;
 
-  round++;
-  nextRound();
-}
+      // Image selection
+      let memeIndex = pickWeightedRandom(images, weights);
+      if (memeIndex === lastShown) weights[memeIndex] = Math.max(0, weights[memeIndex] - 3);
+      lastShown = memeIndex;
 
-// === SHOW SUMMARY ===
-function showSummary() {
-  imagesSummaryTbody.innerHTML = '';
-  soundsSummaryTbody.innerHTML = '';
+      const memeImg = document.getElementById('meme');
+      memeImg.src = images[memeIndex];
+      memeImg.classList.remove('explode');
 
-  images.forEach(img => {
-    const tr = document.createElement('tr');
-    const tdId = document.createElement('td');
-    tdId.textContent = img.id;
-    const tdWeight = document.createElement('td');
-    tdWeight.textContent = img.weight.toFixed(2);
-    tr.appendChild(tdId);
-    tr.appendChild(tdWeight);
-    imagesSummaryTbody.appendChild(tr);
-  });
+      // Sound
+      const audioEl = document.getElementById('audio');
+      audioEl.src = sounds[memeIndex];
+      audioEl.play();
+    }
 
-  sounds.forEach(snd => {
-    const tr = document.createElement('tr');
-    const tdId = document.createElement('td');
-    tdId.textContent = snd.id;
-    const tdWeight = document.createElement('td');
-    tdWeight.textContent = snd.weight.toFixed(2);
-    tr.appendChild(tdId);
-    tr.appendChild(tdWeight);
-    soundsSummaryTbody.appendChild(tr);
-  });
+    function rate(value) {
+      const ratingDisplay = document.getElementById('ratingDisplay');
+      ratingDisplay.textContent = `You rated it a ${value}/10`;
 
-  summaryModal.style.display = 'block';
-}
+      const fire = document.getElementById('fireAudio');
+      fire.currentTime = 0;
+      fire.play();
 
-// === CLOSE SUMMARY ===
-closeSummaryBtn.onclick = () => {
-  summaryModal.style.display = 'none';
-};
+      const meme = document.getElementById('meme');
+      meme.classList.add('explode');
 
-doseBtn.onclick = showSummary;
+      weights[lastShown] = Math.min(10, weights[lastShown] + Number(value));
 
-// === INIT ===
-function init() {
-  nextRound();
+      setTimeout(() => {
+        round++;
+        nextRound();
+      }, 800);
+    }
 
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => vote(btn.dataset.vote));
-  });
-}
-
-init();
-</script>
+    nextRound();
+  </script>
 </body>
 </html>
